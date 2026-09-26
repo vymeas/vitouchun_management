@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title', 'កែប្រែការចុះឈ្មោះ')
+@section('page-title', 'កែប្រែការចុះឈ្មោះ')
+@section('content')
+<div class="card mx-auto" style="max-width:680px"><div class="card-header"><h5 class="mb-0">កែប្រែសភាពការចុះឈ្មោះ</h5></div><div class="card-body"><div class="alert alert-light border"><strong>{{ $enrollment->student?->name_kh }}</strong> · {{ $enrollment->schoolClass?->name }}</div><form method="POST" action="{{ route('enrollments.update', $enrollment) }}">@csrf @method('PUT')<div class="row g-3"><div class="col-md-6"><label class="form-label">ថ្ងៃចុះឈ្មោះ</label><input type="date" name="enrollment_date" class="form-control" value="{{ old('enrollment_date', $enrollment->enrollment_date?->format('Y-m-d')) }}" required></div><div class="col-md-6"><label class="form-label">សភាព</label><select name="status" class="form-select" required>@foreach(['active'=>'សកម្ម','completed'=>'បានបញ្ចប់','transferred'=>'បានផ្ទេរ','cancelled'=>'បានបោះបង់'] as $value => $label)<option value="{{ $value }}" {{ old('status', $enrollment->status) === $value ? 'selected' : '' }}>{{ $label }}</option>@endforeach</select></div></div><div class="text-end mt-4"><a href="{{ route('enrollments.show', $enrollment) }}" class="btn btn-outline-secondary">បោះបង់</a> <button class="btn btn-primary">ធ្វើបច្ចុប្បន្នភាព</button></div></form></div></div>
+@endsection

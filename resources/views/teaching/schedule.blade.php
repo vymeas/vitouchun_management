@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title','កាលវិភាគគ្រូ')
+@section('page-title','កាលវិភាគគ្រូ')
+@section('content')
+<div class="page-header"><div><h2 class="page-header-title"><i class="fas fa-calendar-days text-primary me-2"></i>កាលវិភាគគ្រូ</h2></div><a href="{{ route('teacher-schedules.create') }}" class="btn btn-primary">បង្កើតកាលវិភាគ</a></div><div class="card table-card"><div class="table-responsive"><table class="table"><thead><tr><th>ថ្ងៃ</th><th>ម៉ោង</th><th>គ្រូ</th><th>ថ្នាក់</th><th>មុខវិជ្ជា</th><th>បន្ទប់</th><th></th></tr></thead><tbody>@forelse($schedules as $schedule)<tr><td>{{ $schedule->day_of_week }}</td><td>{{ substr($schedule->start_time,0,5) }} - {{ substr($schedule->end_time,0,5) }}</td><td>{{ $schedule->teacher?->display_name }}</td><td>{{ $schedule->schoolClass?->name }}</td><td>{{ $schedule->subject?->name_kh }}</td><td>{{ $schedule->room ?: '—' }}</td><td><form method="POST" action="{{ route('teacher-schedules.destroy',$schedule) }}">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" onclick="return confirm('បិទកាលវិភាគនេះ?')"><i class="fas fa-ban"></i></button></form></td></tr>@empty<tr><td colspan="7">មិនមានកាលវិភាគ</td></tr>@endforelse</tbody></table></div><div class="card-body border-top">{{ $schedules->links() }}</div></div>
+@endsection

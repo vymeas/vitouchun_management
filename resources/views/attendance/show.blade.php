@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title', 'ព័ត៌មានវត្តមាន')
+@section('page-title', 'ព័ត៌មានវត្តមាន')
+@section('content')
+<div class="card mx-auto" style="max-width:760px"><div class="card-header"><h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>ព័ត៌មានវត្តមាន</h5></div><div class="card-body"><div class="row g-3"><div class="col-md-6"><strong>សិស្ស:</strong> {{ $attendance->student?->name_kh }} ({{ $attendance->student?->code }})</div><div class="col-md-6"><strong>ថ្នាក់:</strong> {{ $attendance->schoolClass?->name }}</div><div class="col-md-6"><strong>កាលបរិច្ឆេទ:</strong> {{ $attendance->attendance_date?->format('d/m/Y') }}</div><div class="col-md-6"><strong>សភាព:</strong> {{ $attendance->status }}</div><div class="col-md-6"><strong>ចូលម៉ោង:</strong> {{ $attendance->check_in_time ?: '—' }}</div><div class="col-md-6"><strong>មូលហេតុ:</strong> {{ $attendance->reason ?: '—' }}</div><div class="col-12"><strong>កំណត់សម្គាល់:</strong> {{ $attendance->note ?: '—' }}</div></div><div class="text-end mt-4"><a href="{{ route('attendance.index') }}" class="btn btn-outline-secondary">ត្រឡប់</a> <a href="{{ route('attendance.edit', $attendance) }}" class="btn btn-primary">កែប្រែ</a></div></div></div>
+@endsection

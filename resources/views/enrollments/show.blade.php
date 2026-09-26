@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title', 'ព័ត៌មានការចុះឈ្មោះ')
+@section('page-title', 'ព័ត៌មានការចុះឈ្មោះ')
+@section('content')
+<div class="card mx-auto" style="max-width:820px"><div class="card-header"><h5 class="mb-0"><i class="fas fa-user-check me-2"></i>ព័ត៌មានការចុះឈ្មោះ</h5></div><div class="card-body"><div class="row g-3"><div class="col-md-6"><strong>សិស្ស:</strong> {{ $enrollment->student?->name_kh }} ({{ $enrollment->student?->code }})</div><div class="col-md-6"><strong>សាខា:</strong> {{ $enrollment->branch?->name_kh ?: $enrollment->branch?->name }}</div><div class="col-md-6"><strong>ឆ្នាំសិក្សា:</strong> {{ $enrollment->academicYear?->name }}</div><div class="col-md-6"><strong>កម្រិត:</strong> {{ $enrollment->grade?->name }}</div><div class="col-md-6"><strong>ក្រុម:</strong> {{ $enrollment->schoolClass?->name }}</div><div class="col-md-6"><strong>ថ្ងៃចុះឈ្មោះ:</strong> {{ $enrollment->enrollment_date?->format('d/m/Y') }}</div><div class="col-md-6"><strong>សភាព:</strong> {{ $enrollment->status }}</div></div><div class="text-end mt-4"><a href="{{ route('enrollments.index') }}" class="btn btn-outline-secondary">ត្រឡប់</a> <a href="{{ route('enrollments.edit', $enrollment) }}" class="btn btn-primary">កែប្រែ</a></div></div></div>
+@endsection

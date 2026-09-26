@@ -1,0 +1,7 @@
+@extends('layouts.app')
+@section('title', 'បង្កាន់ដៃសងប្រាក់')
+@section('page-title', 'បង្កាន់ដៃសងប្រាក់')
+@section('content')
+<div class="card mx-auto receipt-sheet" style="max-width:720px"><div class="card-header d-flex justify-content-between print-hide"><strong>បង្កាន់ដៃសងប្រាក់</strong><button onclick="window.print()" class="btn btn-sm btn-primary">បោះពុម្ព</button></div><div class="card-body"><div class="text-center mb-4"><h3>សាលារៀនវិទូជន</h3><h4>បង្កាន់ដៃសងប្រាក់</h4></div><div class="row g-2"><div class="col-6">លេខសងប្រាក់: {{ $refund->refund_no }}</div><div class="col-6">វិក្កយបត្រ: {{ $refund->payment->invoice?->invoice_number ?? '—' }}</div><div class="col-6">សិស្ស: {{ $refund->payment->student?->name_kh }}</div><div class="col-6">កាលបរិច្ឆេទ: {{ $refund->refund_date?->format('d/m/Y') }}</div><div class="col-6">មូលហេតុ: {{ $refund->reason ?: '—' }}</div><div class="col-6">វិធីសង: {{ $refund->refund_method }}</div></div><hr><div class="text-center fs-4 fw-bold">-{{ $refund->currency }} {{ number_format($refund->amount, 2) }}</div><div class="row mt-5"><div class="col-6 text-center">អ្នកអនុម័ត<br><br>________________</div><div class="col-6 text-center">អ្នកដំណើរការ<br><br>________________</div></div></div></div>
+@push('styles')<style>@media print{.print-hide{display:none!important}.receipt-sheet{border:0!important;box-shadow:none!important}}</style>@endpush
+@endsection
