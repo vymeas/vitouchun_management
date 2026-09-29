@@ -39,15 +39,23 @@
             color: white;
         }
         .login-logo {
-            width: 70px;
-            height: 70px;
-            background: rgba(255,255,255,0.2);
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
             margin-bottom: 16px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .login-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
         .login-title {
             font-size: 1.25rem;
@@ -71,11 +79,12 @@
 
     <div class="login-card">
         <div class="login-header">
-            <div class="login-logo">
-                <i class="fas fa-graduation-cap"></i>
-            </div>
+        <div class="login-logo">
+            <img src="{{ asset('storage/img/logo.png') }}"
+                alt="{{ \App\Services\SettingService::get('school_name_kh', 'សាលារៀនវិទូជន') }} Logo">
+        </div>
             <h1 class="login-title">{{ \App\Services\SettingService::get('school_name_kh', 'សាលារៀនវិទូជន') }}</h1>
-            <div class="login-subtitle">SCHOOL MANAGEMENT SYSTEM</div>
+            <div class="login-subtitle">Vitouchun School</div>
         </div>
         
         <div class="login-body">

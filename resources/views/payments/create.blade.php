@@ -215,22 +215,102 @@
                         <div class="col-md-6"><label class="form-label">ថ្លៃសិក្សាប្រចាំខែ</label><div class="input-group"><span class="input-group-text">$</span><input class="form-control" value="{{ number_format($monthlyTuitionFee, 2) }}" readonly></div></div>
                         <div class="col-md-6"><label class="form-label">បញ្ចុះតម្លៃលើថ្លៃសិក្សា</label><div class="input-group"><select name="discount_type" id="discount-type" class="form-select"><option value="">-</option><option value="percent">%</option><option value="fixed">$</option></select><input type="number" step="0.01" min="0" name="discount_amount" id="discount-amount" class="form-control" value="{{ old('discount_amount', 0) }}" disabled></div></div>
                     </div>
-
                     <div class="border rounded p-3 mt-3">
                         <label class="form-label">សេវាកម្មផ្សេងៗ</label>
+
+                        {{-- Service from Database --}}
                         <select name="service_id" id="service-id" class="form-select">
-                            <option value="">គ្មាន</option>
-                            @foreach($services->reject(fn ($service) => $service->name_kh === 'គ្មាន') as $service)
-                                <option value="{{ $service->id }}" data-price="{{ $service->price }}">{{ $service->name_kh }} — ${{ number_format((float) $service->price, 2) }}</option>
+                            <option value="">-- ជ្រើសរើសសេវាកម្ម --</option>
+
+                            @foreach($services as $service)
+                                <option
+                                    value="{{ $service->id }}"
+                                    data-price="{{ $service->price }}"
+                                    {{ old('service_id') == $service->id ? 'selected' : '' }}
+                                >
+                                    {{ $service->name_kh }}
+                                </option>
                             @endforeach
                         </select>
-                        <div class="input-group mt-2"><span class="input-group-text">$</span><input type="number" step="0.01" min="0" name="service_amount" id="service-amount" class="form-control" value="0" placeholder="តម្លៃសេវាកម្ម"></div>
-                        <small class="text-muted">តម្លៃសេវាកម្មត្រូវបានទាញពី Database</small>
-                    </div>
 
+                        {{-- Price per month --}}
+                        <div class="mt-3">
+                            <label for="service-unit-price" class="form-label">
+                                តម្លៃ / ខែ
+                            </label>
+
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+
+                                <input
+                                    type="number"
+                                    name="service_unit_price"
+                                    id="service-unit-price"
+                                    class="form-control"
+                                    step="0.01"
+                                    min="0"
+                                    value="0"
+                                >
+                            </div>
+                        </div>
+
+                        {{-- Duration --}}
+                        <div class="row g-3 mt-1">
+
+                            <div class="col-md-6">
+                                <label for="service-duration-months" class="form-label">
+                                    រយៈពេល
+                                </label>
+
+                                <select
+                                    name="service_duration_months"
+                                    id="service-duration-months"
+                                    class="form-select"
+                                >
+                                    <option value="">-- ជ្រើសរើសរយៈពេល --</option>
+
+                                    @for($month = 1; $month <= 12; $month++)
+                                        <option
+                                            value="{{ $month }}"
+                                            {{ old('service_duration_months') == $month ? 'selected' : '' }}
+                                        >
+                                            {{ $month }} ខែ
+                                        </option>
+                                    @endfor
+                                </select>
+                            </div>
+
+                            {{-- Total Service Amount --}}
+                            <div class="col-md-6">
+                                <label for="service-amount" class="form-label">
+                                    តម្លៃសរុប
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+
+                                    <input
+                                        type="number"
+                                        name="service_amount"
+                                        id="service-amount"
+                                        class="form-control"
+                                        step="0.01"
+                                        min="0"
+                                        value="{{ old('service_amount', 0) }}"
+                                        readonly
+                                    >
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="small text-muted mt-2">
+                            តម្លៃសរុប = តម្លៃ / ខែ × រយៈពេល
+                        </div>
+                    </div>
                     <div class="row g-3 mt-1">
                         <div class="col-md-6"><label class="form-label">អត្រាប្តូរប្រាក់</label><input type="number" step="0.0001" min="0" name="exchange_rate" id="exchange-rate" class="form-control" placeholder="ទទេ = USD"></div>
-                        <div class="col-md-6"><label class="form-label">វិធីបង់ប្រាក់</label><select name="payment_method" id="payment-method" class="form-select" required><option value="cash">សាច់ប្រាក់</option><option value="bank">ABA / ACLEDA</option><option value="qr">WING / ACLEDA</option><option value="other">ផ្សេងៗ</option></select></div>
+                        <div class="col-md-6"><label class="form-label">វិធីបង់ប្រាក់</label><select name="payment_method" id="payment-method" class="form-select" required><option value="cash">សាច់ប្រាក់</option><option value="bank">ABA ACLEDA</option><option value="bank">ACLEDA</option><option value="qr">WING</option><option value="other">ផ្សេងៗ</option></select></div>
                         <div class="col-md-6"><label class="form-label" for="received-amount">ចំនួនប្រាក់ទទួល</label><div class="input-group"><span class="input-group-text">$</span><input type="number" step="0.01" min="0" name="received_amount" id="received-amount" class="form-control" value="{{ old('received_amount') }}" placeholder="ទទេ = បង់ពេញ"></div></div>
                         <div class="col-12" id="other-bank-wrap" style="display:none"><label class="form-label">ឈ្មោះធនាគារ / អ្នកផ្តល់សេវាទូទាត់</label><input name="other_bank_name" id="other-bank-name" class="form-control"></div>
                     </div>
@@ -254,193 +334,905 @@
 @push('scripts')
 <script>
 (function () {
+
     var form = document.getElementById('payment-form');
-    function value(id) { return parseFloat(document.getElementById(id)?.value || 0) || 0; }
+
+    if (!form) {
+        return;
+    }
+
+    function value(id) {
+        return parseFloat(document.getElementById(id)?.value || 0) || 0;
+    }
+
     function money(amount, exchangeRate) {
-        var displayAmount = exchangeRate > 0 ? amount * exchangeRate : amount;
+        var displayAmount = exchangeRate > 0
+            ? amount * exchangeRate
+            : amount;
+
         return (exchangeRate > 0 ? '៛ ' : '$') + displayAmount.toFixed(2);
     }
-    function monthInputs() { return Array.from(form.querySelectorAll('.month-choice')); }
-    function adminInputs() { return Array.from(form.querySelectorAll('.admin-month-choice')); }
+
+    function monthInputs() {
+        return Array.from(form.querySelectorAll('.month-choice'));
+    }
+
+    function adminInputs() {
+        return Array.from(form.querySelectorAll('.admin-month-choice'));
+    }
+
     function displayDate(date) {
         if (!date) return '—';
+
         var parts = date.split('-');
-        return parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : date;
+
+        return parts.length === 3
+            ? parts[2] + '/' + parts[1] + '/' + parts[0]
+            : date;
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SERVICE
+    |--------------------------------------------------------------------------
+    */
+
+    var serviceSelect = document.getElementById('service-id');
+    var serviceDuration = document.getElementById('service-duration-months');
+    var serviceUnitPrice = document.getElementById('service-unit-price');
+    var serviceAmount = document.getElementById('service-amount');
+
+    function calculateServiceAmount() {
+
+        if (!serviceUnitPrice || !serviceDuration || !serviceAmount) {
+            return;
+        }
+
+        var price = parseFloat(serviceUnitPrice.value || 0) || 0;
+        var months = parseInt(serviceDuration.value || 0) || 0;
+
+        var total = price * months;
+
+        serviceAmount.value = total.toFixed(2);
+    }
+
+    function updateServiceFromDatabase() {
+
+        if (!serviceSelect || !serviceUnitPrice) {
+            return;
+        }
+
+        var selectedOption =
+            serviceSelect.options[serviceSelect.selectedIndex];
+
+        var price =
+            parseFloat(selectedOption?.dataset?.price || 0) || 0;
+
+        serviceUnitPrice.value = price.toFixed(2);
+
+        calculateServiceAmount();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | TUITION PREVIEW
+    |--------------------------------------------------------------------------
+    */
+
     function previewTuition() {
+
         var preview = document.getElementById('tuition-preview');
+
         if (!preview) return;
-        var startDate = preview.dataset.originalStartDate || preview.dataset.registrationDate;
-        var paymentDate = document.getElementById('payment-date').value;
-        var selected = monthInputs().filter(function (input) { return input.checked && !input.disabled; }).map(function (input) { return input.value; });
+
+        var startDate =
+            preview.dataset.originalStartDate ||
+            preview.dataset.registrationDate;
+
+        var paymentDate =
+            document.getElementById('payment-date')?.value;
+
+        var selected = monthInputs()
+            .filter(function (input) {
+                return input.checked && !input.disabled;
+            })
+            .map(function (input) {
+                return input.value;
+            });
+
         var monthlyFee = value('monthly-fee');
+
         var tuition = selected.length * monthlyFee;
+
         var proratedDays = 0;
         var dailyRate = 0;
+
         if (startDate && selected.length) {
+
             var startParts = startDate.split('-');
             var startDay = Number(startParts[2]);
+
             var firstMonth = selected[0];
-            if (startDay >= 15 && firstMonth === startParts[0] + '-' + startParts[1]) {
-                var daysInMonth = new Date(Number(startParts[0]), Number(startParts[1]), 0).getDate();
-                proratedDays = daysInMonth - startDay + 1;
-                dailyRate = Math.round((monthlyFee / daysInMonth) * 100) / 100;
-                tuition = dailyRate * proratedDays + Math.max(0, selected.length - 1) * monthlyFee;
+
+            if (
+                startDay >= 15 &&
+                firstMonth === startParts[0] + '-' + startParts[1]
+            ) {
+
+                var daysInMonth =
+                    new Date(
+                        Number(startParts[0]),
+                        Number(startParts[1]),
+                        0
+                    ).getDate();
+
+                proratedDays =
+                    daysInMonth - startDay + 1;
+
+                dailyRate =
+                    Math.round(
+                        (monthlyFee / daysInMonth) * 100
+                    ) / 100;
+
+                tuition =
+                    dailyRate * proratedDays +
+                    Math.max(0, selected.length - 1) * monthlyFee;
             }
-            var lastMonth = selected[selected.length - 1].split('-');
+
+            var lastMonth =
+                selected[selected.length - 1].split('-');
+
             var nextYear = Number(lastMonth[0]);
             var nextMonth = Number(lastMonth[1]) + 1;
-            if (nextMonth > 12) { nextMonth = 1; nextYear++; }
-            var nextDay = startDay >= 15 ? 1 : Math.min(startDay, new Date(nextYear, nextMonth, 0).getDate());
-            var nextDate = nextYear + '-' + String(nextMonth).padStart(2, '0') + '-' + String(nextDay).padStart(2, '0');
-            var paidUntilDate = new Date(nextYear, nextMonth - 1, nextDay);
-            paidUntilDate.setDate(paidUntilDate.getDate() - 1);
-            var paidUntil = paidUntilDate.getFullYear() + '-' + String(paidUntilDate.getMonth() + 1).padStart(2, '0') + '-' + String(paidUntilDate.getDate()).padStart(2, '0');
-            document.getElementById('preview-next-payment').textContent = displayDate(nextDate);
-            document.getElementById('preview-paid-until').textContent = displayDate(paidUntil);
-        } else {
-            document.getElementById('preview-next-payment').textContent = '—';
-            document.getElementById('preview-paid-until').textContent = preview.dataset.lastPaidUntil ? displayDate(preview.dataset.lastPaidUntil) : '—';
-        }
-        document.getElementById('preview-registration-date').textContent = displayDate(preview.dataset.registrationDate);
-        document.getElementById('preview-original-start-date').textContent = displayDate(startDate);
-        document.getElementById('preview-payment-date').textContent = displayDate(paymentDate);
-        document.getElementById('preview-selected-months').textContent = selected.length;
-        document.getElementById('preview-prorated-days').textContent = proratedDays;
-        document.getElementById('preview-daily-rate').textContent = proratedDays > 0 ? '$' + dailyRate.toFixed(2) : '—';
-        document.getElementById('preview-tuition').textContent = '$' + tuition.toFixed(2);
-    }
-    function updateDiscountInput() {
-        var discountType = document.getElementById('discount-type');
-        var discountAmount = document.getElementById('discount-amount');
-        var hasType = Boolean(discountType.value);
-        discountAmount.disabled = !hasType;
-        if (!hasType) discountAmount.value = '0';
-    }
-    function updateMonthlySequence() {
-        var waitingForMonth = false;
-        monthInputs().forEach(function (input) {
-            if (input.checked && input.disabled && !input.dataset.locked) return;
-            if (input.dataset.locked === 'true' || input.disabled && !input.checked) {
-                input.dataset.locked = 'true';
+
+            if (nextMonth > 12) {
+                nextMonth = 1;
+                nextYear++;
             }
-            if (input.disabled && input.checked && !input.dataset.locked) return;
-            if (input.disabled && !input.dataset.locked) return;
-            if (input.checked) {
-                waitingForMonth = false;
+
+            var nextDay =
+                startDay >= 15
+                    ? 1
+                    : Math.min(
+                        startDay,
+                        new Date(
+                            nextYear,
+                            nextMonth,
+                            0
+                        ).getDate()
+                    );
+
+            var nextDate =
+                nextYear +
+                '-' +
+                String(nextMonth).padStart(2, '0') +
+                '-' +
+                String(nextDay).padStart(2, '0');
+
+            var paidUntilDate =
+                new Date(
+                    nextYear,
+                    nextMonth - 1,
+                    nextDay
+                );
+
+            paidUntilDate.setDate(
+                paidUntilDate.getDate() - 1
+            );
+
+            var paidUntil =
+                paidUntilDate.getFullYear() +
+                '-' +
+                String(
+                    paidUntilDate.getMonth() + 1
+                ).padStart(2, '0') +
+                '-' +
+                String(
+                    paidUntilDate.getDate()
+                ).padStart(2, '0');
+
+            document.getElementById(
+                'preview-next-payment'
+            ).textContent = displayDate(nextDate);
+
+            document.getElementById(
+                'preview-paid-until'
+            ).textContent = displayDate(paidUntil);
+
+        } else {
+
+            document.getElementById(
+                'preview-next-payment'
+            ).textContent = '—';
+
+            document.getElementById(
+                'preview-paid-until'
+            ).textContent =
+                preview.dataset.lastPaidUntil
+                    ? displayDate(
+                        preview.dataset.lastPaidUntil
+                    )
+                    : '—';
+        }
+
+        document.getElementById(
+            'preview-registration-date'
+        ).textContent =
+            displayDate(
+                preview.dataset.registrationDate
+            );
+
+        document.getElementById(
+            'preview-original-start-date'
+        ).textContent =
+            displayDate(startDate);
+
+        document.getElementById(
+            'preview-payment-date'
+        ).textContent =
+            displayDate(paymentDate);
+
+        document.getElementById(
+            'preview-selected-months'
+        ).textContent =
+            selected.length;
+
+        document.getElementById(
+            'preview-prorated-days'
+        ).textContent =
+            proratedDays;
+
+        document.getElementById(
+            'preview-daily-rate'
+        ).textContent =
+            proratedDays > 0
+                ? '$' + dailyRate.toFixed(2)
+                : '—';
+
+        document.getElementById(
+            'preview-tuition'
+        ).textContent =
+            '$' + tuition.toFixed(2);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DISCOUNT
+    |--------------------------------------------------------------------------
+    */
+
+    function updateDiscountInput() {
+
+        var discountType =
+            document.getElementById('discount-type');
+
+        var discountAmount =
+            document.getElementById('discount-amount');
+
+        if (!discountType || !discountAmount) {
+            return;
+        }
+
+        var hasType =
+            Boolean(discountType.value);
+
+        discountAmount.disabled = !hasType;
+
+        if (!hasType) {
+            discountAmount.value = '0';
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MONTH SEQUENCE
+    |--------------------------------------------------------------------------
+    */
+
+    function updateMonthlySequence() {
+
+        var waitingForMonth = false;
+
+        monthInputs().forEach(function (input) {
+
+            if (
+                input.checked &&
+                input.disabled &&
+                !input.dataset.locked
+            ) {
                 return;
             }
+
+            if (
+                input.dataset.locked === 'true' ||
+                (input.disabled && !input.checked)
+            ) {
+                input.dataset.locked = 'true';
+            }
+
+            if (
+                input.disabled &&
+                input.checked &&
+                !input.dataset.locked
+            ) {
+                return;
+            }
+
+            if (
+                input.disabled &&
+                !input.dataset.locked
+            ) {
+                return;
+            }
+
+            if (input.checked) {
+
+                waitingForMonth = false;
+
+                return;
+            }
+
             input.disabled = waitingForMonth;
-            var status = input.closest('label')?.querySelector('[data-locked-status]');
-            if (status) status.classList.toggle('d-none', !input.disabled);
-            input.closest('label')?.classList.toggle('is-disabled', input.disabled);
-            if (!input.disabled) waitingForMonth = true;
+
+            var status =
+                input.closest('label')
+                    ?.querySelector('[data-locked-status]');
+
+            if (status) {
+                status.classList.toggle(
+                    'd-none',
+                    !input.disabled
+                );
+            }
+
+            input.closest('label')
+                ?.classList.toggle(
+                    'is-disabled',
+                    input.disabled
+                );
+
+            if (!input.disabled) {
+                waitingForMonth = true;
+            }
         });
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMINISTRATIVE FEE
+    |--------------------------------------------------------------------------
+    */
+
+    function updateAdministrativeState() {
+
+        var toggle =
+            document.getElementById(
+                'annual-administrative-fee'
+            );
+
+        var panel =
+            document.getElementById(
+                'administrative-months-panel'
+            );
+
+        var includeAnnualFee =
+            toggle &&
+            toggle.checked &&
+            !toggle.disabled;
+
+        if (panel) {
+            panel.classList.toggle(
+                'opacity-50',
+                !includeAnnualFee &&
+                !(toggle && toggle.disabled)
+            );
+        }
+
+        adminInputs().forEach(function (input) {
+
+            if (!input.dataset.paid) {
+                input.disabled = !includeAnnualFee;
+            }
+        });
+
+        syncAdministrativeCheckAll();
+    }
+
+    function syncAdministrativeCheckAll() {
+
+        var selectAll =
+            document.getElementById(
+                'select-all-administrative-months'
+            );
+
+        if (!selectAll) {
+            return;
+        }
+
+        var toggle =
+            document.getElementById(
+                'annual-administrative-fee'
+            );
+
+        var selected =
+            adminInputs().filter(function (input) {
+                return input.checked;
+            });
+
+        selectAll.disabled =
+            toggle && toggle.disabled;
+
+        selectAll.checked =
+            adminInputs().length > 0 &&
+            adminInputs().length === selected.length;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MAIN RECALC
+    |--------------------------------------------------------------------------
+    */
+
     function recalc() {
+
+        // IMPORTANT:
+        // Recalculate service first.
+        calculateServiceAmount();
+
         updateDiscountInput();
-        var months = document.querySelectorAll('.month-choice:checked:not(:disabled)').length;
-        var tuition = months * value('monthly-fee');
-        var annualFeeToggle = document.getElementById('annual-administrative-fee');
-        var includeAnnualFee = annualFeeToggle && annualFeeToggle.checked && !annualFeeToggle.disabled;
-        var adminMonths = document.querySelectorAll('.admin-month-choice:checked:not(:disabled)').length;
-        var service = value('service-amount');
-        var admin = includeAnnualFee && adminMonths > 0 ? Math.round((10 * adminMonths / 12) * 100) / 100 : 0;
-        var discount = value('discount-amount');
-        if (document.getElementById('discount-type').value === 'percent') discount = tuition * discount / 100;
-        var total = Math.max(0, tuition - discount + admin + service);
-        var receivedAmount = document.getElementById('received-amount');
-        if (receivedAmount && !receivedAmount.dataset.edited) receivedAmount.value = total.toFixed(2);
-        var exchangeRate = value('exchange-rate');
-        var displayTotal = exchangeRate > 0 ? total * exchangeRate : total;
-        document.getElementById('tuition-summary').textContent = money(tuition, exchangeRate);
-        document.getElementById('service-summary').textContent = money(service, exchangeRate);
-        document.getElementById('admin-summary').textContent = money(admin, exchangeRate);
-        document.getElementById('discount-summary').textContent = '-' + money(discount, exchangeRate);
-        document.getElementById('total-display').textContent = (exchangeRate > 0 ? '៛ ' : '$ ') + displayTotal.toFixed(2);
-        document.getElementById('month-selection-summary').textContent = months ? 'បានជ្រើសរើស ' + months + ' ខែ' : 'មិនទាន់បានជ្រើសរើសខែ';
-        var adminSummary = document.getElementById('administrative-month-summary');
-        if (adminSummary) adminSummary.textContent = adminMonths ? 'បានជ្រើសរើស ' + adminMonths + ' ខែ — ថ្លៃសេវារដ្ឋបាល: ' + money(admin, exchangeRate) : 'មិនទាន់បានជ្រើសរើសខែ — ថ្លៃសេវារដ្ឋបាល: ' + money(0, exchangeRate);
+
+        var months =
+            document.querySelectorAll(
+                '.month-choice:checked:not(:disabled)'
+            ).length;
+
+        var tuition =
+            months * value('monthly-fee');
+
+        var annualFeeToggle =
+            document.getElementById(
+                'annual-administrative-fee'
+            );
+
+        var includeAnnualFee =
+            annualFeeToggle &&
+            annualFeeToggle.checked &&
+            !annualFeeToggle.disabled;
+
+        var adminMonths =
+            document.querySelectorAll(
+                '.admin-month-choice:checked:not(:disabled)'
+            ).length;
+
+        var service =
+            value('service-amount');
+
+        var admin =
+            includeAnnualFee && adminMonths > 0
+                ? Math.round(
+                    (10 * adminMonths / 12) * 100
+                ) / 100
+                : 0;
+
+        var discount =
+            value('discount-amount');
+
+        var discountType =
+            document.getElementById(
+                'discount-type'
+            )?.value;
+
+        if (discountType === 'percent') {
+            discount =
+                tuition * discount / 100;
+        }
+
+        var total =
+            Math.max(
+                0,
+                tuition -
+                discount +
+                admin +
+                service
+            );
+
+        var receivedAmount =
+            document.getElementById(
+                'received-amount'
+            );
+
+        if (
+            receivedAmount &&
+            !receivedAmount.dataset.edited
+        ) {
+            receivedAmount.value =
+                total.toFixed(2);
+        }
+
+        var exchangeRate =
+            value('exchange-rate');
+
+        var displayTotal =
+            exchangeRate > 0
+                ? total * exchangeRate
+                : total;
+
+        document.getElementById(
+            'tuition-summary'
+        ).textContent =
+            money(tuition, exchangeRate);
+
+        document.getElementById(
+            'service-summary'
+        ).textContent =
+            money(service, exchangeRate);
+
+        document.getElementById(
+            'admin-summary'
+        ).textContent =
+            money(admin, exchangeRate);
+
+        document.getElementById(
+            'discount-summary'
+        ).textContent =
+            '-' + money(
+                discount,
+                exchangeRate
+            );
+
+        document.getElementById(
+            'total-display'
+        ).textContent =
+            (exchangeRate > 0
+                ? '៛ '
+                : '$ ') +
+            displayTotal.toFixed(2);
+
+        document.getElementById(
+            'month-selection-summary'
+        ).textContent =
+            months
+                ? 'បានជ្រើសរើស ' +
+                  months +
+                  ' ខែ'
+                : 'មិនទាន់បានជ្រើសរើសខែ';
+
+        var adminSummary =
+            document.getElementById(
+                'administrative-month-summary'
+            );
+
+        if (adminSummary) {
+
+            adminSummary.textContent =
+                adminMonths
+                    ? 'បានជ្រើសរើស ' +
+                      adminMonths +
+                      ' ខែ — ថ្លៃសេវារដ្ឋបាល: ' +
+                      money(
+                          admin,
+                          exchangeRate
+                      )
+                    : 'មិនទាន់បានជ្រើសរើសខែ — ថ្លៃសេវារដ្ឋបាល: ' +
+                      money(
+                          0,
+                          exchangeRate
+                      );
+        }
+
         updateAdministrativeState();
+
         previewTuition();
     }
-    function updateAdministrativeState() {
-        var toggle = document.getElementById('annual-administrative-fee');
-        var panel = document.getElementById('administrative-months-panel');
-        var includeAnnualFee = toggle && toggle.checked && !toggle.disabled;
-            if (panel) panel.classList.toggle('opacity-50', !includeAnnualFee && !(toggle && toggle.disabled));
-        adminInputs().forEach(function (input) {
-            if (!input.dataset.paid) input.disabled = !includeAnnualFee;
-        });
-        syncAdministrativeCheckAll();
+
+    /*
+    |--------------------------------------------------------------------------
+    | SERVICE EVENTS
+    |--------------------------------------------------------------------------
+    */
+
+    if (serviceSelect) {
+
+        serviceSelect.addEventListener(
+            'change',
+            function () {
+
+                updateServiceFromDatabase();
+
+                recalc();
+            }
+        );
     }
-    function syncAdministrativeCheckAll() {
-        var selectAll = document.getElementById('select-all-administrative-months');
-        if (selectAll) {
-            var toggle = document.getElementById('annual-administrative-fee');
-            var includeAnnualFee = toggle && toggle.checked && !toggle.disabled;
-            var selected = adminInputs().filter(function (input) { return input.checked; });
-            selectAll.disabled = toggle && toggle.disabled;
-            selectAll.checked = adminInputs().length > 0 && adminInputs().length === selected.length;
-        }
+
+    if (serviceUnitPrice) {
+
+        serviceUnitPrice.addEventListener(
+            'input',
+            function () {
+
+                calculateServiceAmount();
+
+                recalc();
+            }
+        );
     }
-    var annualAdministrativeFee = document.getElementById('annual-administrative-fee');
-    if (annualAdministrativeFee) annualAdministrativeFee.addEventListener('change', function () {
-        if (!annualAdministrativeFee.checked) adminInputs().forEach(function (input) { if (!input.dataset.paid) input.checked = false; });
-        updateAdministrativeState();
-        recalc();
-    });
-    var selectAllAdministrativeMonths = document.getElementById('select-all-administrative-months');
+
+    if (serviceDuration) {
+
+        serviceDuration.addEventListener(
+            'change',
+            function () {
+
+                calculateServiceAmount();
+
+                recalc();
+            }
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN EVENTS
+    |--------------------------------------------------------------------------
+    */
+
+    var annualAdministrativeFee =
+        document.getElementById(
+            'annual-administrative-fee'
+        );
+
+    if (annualAdministrativeFee) {
+
+        annualAdministrativeFee.addEventListener(
+            'change',
+            function () {
+
+                if (!annualAdministrativeFee.checked) {
+
+                    adminInputs().forEach(
+                        function (input) {
+
+                            if (!input.dataset.paid) {
+                                input.checked = false;
+                            }
+                        }
+                    );
+                }
+
+                updateAdministrativeState();
+
+                recalc();
+            }
+        );
+    }
+
+    var selectAllAdministrativeMonths =
+        document.getElementById(
+            'select-all-administrative-months'
+        );
+
     function applyAdministrativeSelectAll() {
-        var shouldSelect = selectAllAdministrativeMonths.checked;
-        if (selectAllAdministrativeMonths.checked && annualAdministrativeFee && !annualAdministrativeFee.checked && !annualAdministrativeFee.disabled) {
+
+        var shouldSelect =
+            selectAllAdministrativeMonths.checked;
+
+        if (
+            shouldSelect &&
+            annualAdministrativeFee &&
+            !annualAdministrativeFee.checked &&
+            !annualAdministrativeFee.disabled
+        ) {
+
             annualAdministrativeFee.checked = true;
+
             updateAdministrativeState();
         }
-        adminInputs().filter(function (input) { return !input.disabled; }).forEach(function (input) {
-            input.checked = shouldSelect;
-        });
-        selectAllAdministrativeMonths.checked = shouldSelect;
+
+        adminInputs()
+            .filter(function (input) {
+                return !input.disabled;
+            })
+            .forEach(function (input) {
+
+                input.checked = shouldSelect;
+            });
+
+        selectAllAdministrativeMonths.checked =
+            shouldSelect;
+
         syncAdministrativeCheckAll();
+
         recalc();
     }
+
     if (selectAllAdministrativeMonths) {
-        selectAllAdministrativeMonths.addEventListener('change', applyAdministrativeSelectAll);
-        var selectAllLabel = document.querySelector('.administrative-check-all .form-check-label');
-        if (selectAllLabel) selectAllLabel.addEventListener('click', function (event) {
-            event.preventDefault();
-            selectAllAdministrativeMonths.checked = !selectAllAdministrativeMonths.checked;
-            applyAdministrativeSelectAll();
-        });
+
+        selectAllAdministrativeMonths.addEventListener(
+            'change',
+            applyAdministrativeSelectAll
+        );
+
+        var selectAllLabel =
+            document.querySelector(
+                '.administrative-check-all .form-check-label'
+            );
+
+        if (selectAllLabel) {
+
+            selectAllLabel.addEventListener(
+                'click',
+                function (event) {
+
+                    event.preventDefault();
+
+                    selectAllAdministrativeMonths.checked =
+                        !selectAllAdministrativeMonths.checked;
+
+                    applyAdministrativeSelectAll();
+                }
+            );
+        }
     }
-    form.querySelectorAll('input, select').forEach(function (input) { input.addEventListener('input', recalc); input.addEventListener('change', recalc); });
-    var receivedAmount = document.getElementById('received-amount');
-    if (receivedAmount) receivedAmount.addEventListener('input', function () { receivedAmount.dataset.edited = 'true'; });
-    form.querySelectorAll('.month-choice').forEach(function (input) {
-        if (input.checked && input.disabled) input.dataset.paid = 'true';
-        input.addEventListener('change', function () { updateMonthlySequence(); recalc(); });
+
+    /*
+    |--------------------------------------------------------------------------
+    | GENERAL INPUT EVENTS
+    |--------------------------------------------------------------------------
+    */
+
+    form.querySelectorAll(
+        'input, select'
+    ).forEach(function (input) {
+
+        // Service fields have their own event handlers
+        // above, but recalc is also safe here.
+        input.addEventListener(
+            'input',
+            recalc
+        );
+
+        input.addEventListener(
+            'change',
+            recalc
+        );
     });
-    form.querySelectorAll('.admin-month-choice').forEach(function (input) {
-        if (input.checked && input.disabled) input.dataset.paid = 'true';
-        input.addEventListener('change', function () { syncAdministrativeCheckAll(); recalc(); });
-    });
-    form.addEventListener('submit', function (event) {
-        if (!form.querySelector('.month-choice:checked:not(:disabled)')) {
-            event.preventDefault();
-            window.alert('សូមជ្រើសរើសខែដែលត្រូវបង់ប្រាក់។');
+
+    /*
+    |--------------------------------------------------------------------------
+    | RECEIVED AMOUNT
+    |--------------------------------------------------------------------------
+    */
+
+    var receivedAmount =
+        document.getElementById(
+            'received-amount'
+        );
+
+    if (receivedAmount) {
+
+        receivedAmount.addEventListener(
+            'input',
+            function () {
+
+                receivedAmount.dataset.edited =
+                    'true';
+            }
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | TUITION MONTHS
+    |--------------------------------------------------------------------------
+    */
+
+    form.querySelectorAll(
+        '.month-choice'
+    ).forEach(function (input) {
+
+        if (
+            input.checked &&
+            input.disabled
+        ) {
+            input.dataset.paid = 'true';
         }
-        if (annualAdministrativeFee && annualAdministrativeFee.checked && !annualAdministrativeFee.disabled && !form.querySelector('.admin-month-choice:checked:not(:disabled)')) {
-            event.preventDefault();
-            window.alert('សូមជ្រើសរើសខែសម្រាប់ថ្លៃសេវារដ្ឋបាល។');
-        }
+
+        input.addEventListener(
+            'change',
+            function () {
+
+                updateMonthlySequence();
+
+                recalc();
+            }
+        );
     });
-    document.getElementById('service-id').addEventListener('change', function () { var price = this.selectedOptions[0]?.dataset.price || 0; var amount = document.getElementById('service-amount'); amount.value = this.value ? price : '0'; amount.disabled = !this.value; recalc(); });
-    document.getElementById('payment-method').addEventListener('change', function () { var other = this.value === 'other'; document.getElementById('other-bank-wrap').style.display = other ? '' : 'none'; var input = document.getElementById('other-bank-name'); input.disabled = !other; if (!other) input.value = ''; });
-    document.getElementById('service-amount').disabled = true;
-    document.getElementById('other-bank-name').disabled = true;
-    updateMonthlySequence();
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN MONTHS
+    |--------------------------------------------------------------------------
+    */
+
+    form.querySelectorAll(
+        '.admin-month-choice'
+    ).forEach(function (input) {
+
+        if (
+            input.checked &&
+            input.disabled
+        ) {
+            input.dataset.paid = 'true';
+        }
+
+        input.addEventListener(
+            'change',
+            function () {
+
+                syncAdministrativeCheckAll();
+
+                recalc();
+            }
+        );
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORM SUBMIT
+    |--------------------------------------------------------------------------
+    */
+
+    form.addEventListener(
+        'submit',
+        function (event) {
+
+            if (
+                !form.querySelector(
+                    '.month-choice:checked:not(:disabled)'
+                )
+            ) {
+
+                event.preventDefault();
+
+                window.alert(
+                    'សូមជ្រើសរើសខែដែលត្រូវបង់ប្រាក់។'
+                );
+
+                return;
+            }
+
+            if (
+                annualAdministrativeFee &&
+                annualAdministrativeFee.checked &&
+                !annualAdministrativeFee.disabled &&
+                !form.querySelector(
+                    '.admin-month-choice:checked:not(:disabled)'
+                )
+            ) {
+
+                event.preventDefault();
+
+                window.alert(
+                    'សូមជ្រើសរើសខែសម្រាប់ថ្លៃសេវារដ្ឋបាល។'
+                );
+            }
+        }
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | INITIALIZE
+    |--------------------------------------------------------------------------
+    */
+
+    updateServiceFromDatabase();
+
     updateAdministrativeState();
+
+    updateMonthlySequence();
+
     recalc();
+
 })();
 </script>
 @endpush

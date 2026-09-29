@@ -34,7 +34,29 @@ class StorePaymentRequest extends FormRequest
             'line_items' => ['nullable', 'array'],
             'line_items.*.description' => ['required_with:line_items.*.amount', 'nullable', 'string', 'max:255'],
             'line_items.*.amount' => ['required_with:line_items.*.description', 'nullable', 'numeric', 'gte:0'],
-            'service_id' => ['nullable', 'exists:services,id'],
+            'service_id' => [
+                'nullable',
+                'exists:services,id',
+            ],
+
+            'service_duration_months' => [
+                'nullable',
+                'integer',
+                'min:1',
+                'max:12',
+            ],
+
+            'service_unit_price' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            'service_amount' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
             'service_amount' => ['nullable', 'numeric', 'gte:0'],
             'payment_method' => ['required', 'in:cash,bank,qr,other'],
             'other_bank_name' => ['nullable', 'string', 'max:100', 'required_if:payment_method,other'],

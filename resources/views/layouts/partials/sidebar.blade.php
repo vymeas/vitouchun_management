@@ -1,4 +1,25 @@
 {{-- Sidebar Navigation --}}
+<style>
+    .login-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 80%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10x;
+    padding: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.login-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+</style>
 <nav id="appSidebar" class="app-sidebar">
 
     {{-- Logo / School Name --}}
@@ -8,9 +29,10 @@
             @if($logo)
                 <img src="{{ asset('storage/' . $logo) }}" alt="logo" class="sidebar-logo">
             @else
-                <div class="sidebar-logo-placeholder">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
+            <div class="login-logo">
+                <img src="{{ asset('storage/img/logo.png') }}"
+                    alt="{{ \App\Services\SettingService::get('school_name_kh', 'សាលារៀនវិទូជន') }} Logo">
+            </div>
             @endif
             <div class="sidebar-brand-text">
                 <span class="brand-name">{{ \App\Services\SettingService::get('school_name_kh', 'វិទូជន') }}</span>
@@ -23,7 +45,7 @@
     </div>
 
     {{-- User Info --}}
-    <div class="sidebar-user">
+    <!-- <div class="sidebar-user">
         <div class="sidebar-user-avatar">
             <i class="fas fa-user-circle"></i>
         </div>
@@ -31,7 +53,7 @@
             <div class="user-name">{{ auth()->user()->display_name }}</div>
             <div class="user-role">{{ auth()->user()->role_label }}</div>
         </div>
-    </div>
+    </div> -->
 
     {{-- Navigation Menu --}}
     <div class="sidebar-nav">
