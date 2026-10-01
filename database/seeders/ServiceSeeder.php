@@ -18,12 +18,18 @@ class ServiceSeeder extends Seeder
             ['name_kh' => 'ថ្លៃដឹកនិងស្នាក់នៅ', 'name_en' => 'Transportation and accommodation'],
             ['name_kh' => 'ថ្លៃដឹកនិងស្នាក់នៅញាំអាហារ', 'name_en' => 'Transportation and accommodation with meals'],
         ];
-
         foreach (Branch::query()->get() as $branch) {
             foreach ($services as $service) {
                 Service::updateOrCreate(
-                    ['branch_id' => $branch->id, 'name_kh' => $service['name_kh']],
-                    [...$service, 'price' => 0, 'status' => 'active'],
+                    [
+                        'branch_id' => $branch->id,
+                        'name_kh' => $service['name_kh'],
+                    ],
+                    [
+                        'name_en' => $service['name_en'],
+                        'price' => 0,
+                        'status' => 'active',
+                    ],
                 );
             }
         }
