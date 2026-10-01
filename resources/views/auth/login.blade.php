@@ -80,7 +80,7 @@
     <div class="login-card">
         <div class="login-header">
         <div class="login-logo">
-            <img src="{{ asset('storage/img/logo.png') }}"
+            <img src="{{ asset('storage/images/logo.png') }}"
                 alt="{{ \App\Services\SettingService::get('school_name_kh', 'សាលារៀនវិទូជន') }} Logo">
         </div>
             <h1 class="login-title">{{ \App\Services\SettingService::get('school_name_kh', 'សាលារៀនវិទូជន') }}</h1>

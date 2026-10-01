@@ -31,7 +31,7 @@
 
 <section class="invoice-copy">
     <header class="invoice-header">
-        <img class="invoice-logo" src="{{ asset('storage/img/logo.png') }}" alt="{{ $schoolName }}">
+        <img class="invoice-logo" src="{{ asset('storage/images/logo.png') }}" alt="{{ $schoolName }}">
         <div class="invoice-school-name">{{ $schoolName }}</div>
         <div class="invoice-tagline">{{ $tagline }}</div>
     </header>
