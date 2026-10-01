@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('payment_items', function (Blueprint $table) {
             $table->unsignedTinyInteger('duration_months')
                 ->nullable()
-                ->after('quantity');
+                ->after('description');
         });
     }
 
