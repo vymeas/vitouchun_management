@@ -1,16 +1,16 @@
 {{-- Sidebar Navigation --}}
 <style>
-    .login-logo {
+.login-logo {
     width: 70px;
     height: 70px;
-    border-radius: 80%;
+    border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10x;
+    margin-bottom: 10px;
     padding: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .login-logo img {
@@ -19,30 +19,100 @@
     object-fit: contain;
     display: block;
 }
+/* =========================
+   Sidebar Logo Fix
+   ========================= */
+
+.app-sidebar .sidebar-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 90px !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.app-sidebar .sidebar-brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+}
+
+.app-sidebar .login-logo {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+    min-height: 70px !important;
+    max-width: 70px !important;
+    max-height: 70px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 70px !important;
+    padding: 8px !important;
+    margin: 0 !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.app-sidebar .login-logo img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.app-sidebar .sidebar-brand-text {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+    visibility: visible !important;
+}
+
+.app-sidebar .brand-name,
+.app-sidebar .brand-tagline {
+    display: block !important;
+}
 </style>
 <nav id="appSidebar" class="app-sidebar">
 
-    {{-- Logo / School Name --}}
-    <div class="sidebar-header">
-        <div class="sidebar-brand d-flex align-items-center gap-2">
-            @php $logo = \App\Services\SettingService::get('school_logo'); @endphp
-            @if($logo)
-                <img src="{{ asset('storage/' . $logo) }}" alt="logo" class="sidebar-logo">
-            @else
-            <div class="login-logo">
-                <img src="{{ asset('storage/img/logo.png') }}"
-                    alt="{{ \App\Services\SettingService::get('school_name_kh', 'សាលារៀនវិទូជន') }} Logo">
+            {{-- Logo / School Name --}}
+        <div class="sidebar-header">
+            <div class="sidebar-brand d-flex align-items-center gap-2">
+
+                <div class="login-logo">
+                    <img
+                        <img src="{{ asset('storage/images/logo.png') }}"
+                        alt="សាលារៀនវិទូជន Logo"
+                    >
+                </div>
+
+                <div class="sidebar-brand-text">
+                    <span class="brand-name">
+                        {{ \App\Services\SettingService::get('school_name_kh', 'វិទូជន') }}
+                    </span>
+
+                    <span class="brand-tagline">
+                        School Management
+                    </span>
+                </div>
+
             </div>
-            @endif
-            <div class="sidebar-brand-text">
-                <span class="brand-name">{{ \App\Services\SettingService::get('school_name_kh', 'វិទូជន') }}</span>
-                <span class="brand-tagline">School Management</span>
-            </div>
+
+            <button class="sidebar-close-btn d-lg-none" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <button class="sidebar-close-btn d-lg-none" id="sidebarClose">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
 
     {{-- User Info --}}
     <!-- <div class="sidebar-user">
